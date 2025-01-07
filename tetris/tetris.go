@@ -58,6 +58,7 @@ func handleInput(board board, piece pieceManager, exit chan struct{}) {
 		leftKey     = 67
 		rightKey    = 68
 		downKey     = 66
+		upKey       = 65
 		escape      = 27
 		squareBrack = 91
 		ctrlC       = 3
@@ -108,6 +109,8 @@ func handleInput(board board, piece pieceManager, exit chan struct{}) {
 			piece.move(board, east)
 		case downKey:
 			piece.move(board, south)
+		case upKey:
+			//piece.rotate(board)
 		}
 		buffer.Reset()
 	}
@@ -124,7 +127,7 @@ func StartGame() {
 
 	board := makeBoard()
 	fmt.Println(board)
-	piece := newPiece()
+	piece := newPieceManager()
 	fmt.Println(piece)
 
 	exit := make(chan struct{})

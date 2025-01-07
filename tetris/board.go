@@ -67,7 +67,7 @@ func (b board) String() string {
 	return sBuilder.String()
 }
 
-//Checks if point is in bounds and if it doesn't collide with other blocks.
+// Checks if point is in bounds and if it doesn't collide with other blocks.
 func (b board) hasCollided(p point) bool {
 	if p.x < 0 || p.x >= cols {
 		return true
