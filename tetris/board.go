@@ -72,10 +72,10 @@ func (b board) hasCollided(p point) bool {
 	if p.x < 0 || p.x >= cols {
 		return true
 	}
-	if p.y < 0 || p.y >= rows {
+	if p.y >= rows {
 		return true
 	}
-	if b[p.y][p.x] {
+	if p.y >= 0 && b[p.y][p.x] {
 		return true
 	}
 

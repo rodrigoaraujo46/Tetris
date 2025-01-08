@@ -1,19 +1,19 @@
 package tetris
 
-// A bar represents a bar piece.
+// A t represents a bar piece.
 type t struct {
 	*piece
 }
 
-// Creates a bar piece with a random colour, default starting position and direction.
-func newT() *bar {
+// Creates a t piece with a random colour, default starting position and a matrix representative of it's blocks.
+func newT() *t {
 	piece := newPiece()
-	piece.positon = point{3, 0}
+	piece.position = point{3, -2}
 	piece.matrix = make([][]bool, 3)
 	piece.matrix[0] = []bool{false, true, false}
 	piece.matrix[1] = []bool{true, true, true}
 
-	return &bar{piece}
+	return &t{piece}
 }
 
 /*

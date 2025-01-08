@@ -24,12 +24,14 @@ const (
 	west
 )
 
+// Piece represents a tetris piece.
 type piece struct {
-	positon point
-	color   string
-	matrix  [][]bool
+	position point
+	color    string
+	matrix   [][]bool
 }
 
+// Creates a new piece and set its color.
 func newPiece() *piece {
 	color := newColor()
 
@@ -40,13 +42,12 @@ func newPiece() *piece {
 // Return a string that if printed shows the piece on the board.
 func (p piece) String() string {
 	var sBuilder strings.Builder
-	sBuilder.Grow(160) // First sBuilder size cappable of holding the entire string.
 
 	sBuilder.WriteString(p.color) //Sets terminal ouput color.
 
 	// Moves cursor to printing positon.
-	cursorY := fmt.Sprintf(yTempl, initY+p.positon.y*scaleY)
-	cursorX := fmt.Sprintf(xTempl, initX+p.positon.x*scaleX)
+	cursorY := fmt.Sprintf(yTempl, initY+p.position.y*scaleY)
+	cursorX := fmt.Sprintf(xTempl, initX+p.position.x*scaleX)
 	sBuilder.WriteString(cursorY + cursorX)
 
 	//Sets the bar with the given scale.
@@ -54,7 +55,8 @@ func (p piece) String() string {
 		for range scaleY {
 			for x := range p.matrix[y] {
 				for range scaleX {
-					if p.matrix[y][x] {
+					isInView := p.position.y >= -1 && (p.position.y != -1 || y != 0)
+					if p.matrix[y][x] && isInView {
 						sBuilder.WriteRune(block)
 					} else {
 						sBuilder.WriteString(forward)
@@ -71,11 +73,10 @@ func (p piece) String() string {
 // Clears the piece from the terminal.
 func (p piece) clear() {
 	var sBuilder strings.Builder
-	sBuilder.Grow(64) // First sBuilder size cappable of holding the entire string.
 
 	// Moves cursor to printing positon.
-	cursorY := fmt.Sprintf(yTempl, initY+p.positon.y*scaleY)
-	cursorX := fmt.Sprintf(xTempl, initX+p.positon.x*scaleX)
+	cursorY := fmt.Sprintf(yTempl, initY+p.position.y*scaleY)
+	cursorX := fmt.Sprintf(xTempl, initX+p.position.x*scaleX)
 	sBuilder.WriteString(cursorY + cursorX)
 
 	//Sets the bar with the given scale to whitespace.
@@ -83,7 +84,8 @@ func (p piece) clear() {
 		for range scaleY {
 			for x := range p.matrix[y] {
 				for range scaleX {
-					if p.matrix[y][x] {
+					isInView := p.position.y >= -1 && (p.position.y != -1 || y != 0)
+					if p.matrix[y][x] && isInView {
 						sBuilder.WriteRune(' ')
 					} else {
 						sBuilder.WriteString(forward)
@@ -96,9 +98,9 @@ func (p piece) clear() {
 	fmt.Println(sBuilder.String())
 }
 
-// Checks if any point in bor have collided with the given board.
+// Checks if any point in a piece has collided with the given board.
 func (p piece) hasCollided(board board) bool {
-	pos := p.positon
+	pos := p.position
 	for y := range p.matrix {
 		for x := range p.matrix[y] {
 			if p.matrix[y][x] {
@@ -111,12 +113,12 @@ func (p piece) hasCollided(board board) bool {
 	return false
 }
 
-// Moves a bar in the given direction, if bar collides with the board, nothing happens.
+// Moves a piece in the given direction, if piece collides with the board, nothing happens.
 func (p *piece) move(board board, dir direction) {
 	p.clear()
 
 	tempBar := *p
-	tempBar.positon.move(dir)
+	tempBar.position.move(dir)
 	if !tempBar.hasCollided(board) {
 		*p = tempBar
 	}

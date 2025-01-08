@@ -1,19 +1,19 @@
 package tetris
 
-// A bar represents a bar piece.
+// A z represents a z piece.
 type z struct {
 	*piece
 }
 
-// Creates a bar piece with a random colour, default starting position and direction.
-func newZ() *bar {
+// Creates a z piece with a random colour, default starting position and a matrix representative of it's blocks.
+func newZ() *z {
 	piece := newPiece()
-	piece.positon = point{3, 0}
+	piece.position = point{3, -2}
 	piece.matrix = make([][]bool, 3)
 	piece.matrix[0] = []bool{true, true, false}
 	piece.matrix[1] = []bool{false, true, true}
 
-	return &bar{piece}
+	return &z{piece}
 }
 
 /*
