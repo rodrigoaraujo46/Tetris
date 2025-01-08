@@ -114,16 +114,40 @@ func (p piece) hasCollided(board board) bool {
 }
 
 // Moves a piece in the given direction, if piece collides with the board, nothing happens.
-func (p *piece) move(board board, dir direction) {
-	p.clear()
+func (p *piece) move(board board, dir direction) bool {
 
 	tempBar := *p
 	tempBar.position.move(dir)
 	if !tempBar.hasCollided(board) {
+		p.clear()
 		*p = tempBar
+		fmt.Println(p)
+		return true
 	}
 
-	fmt.Println(p)
+	return false
+}
+
+func (p *piece) applyMoves(keysP keysPressed, b board) {
+	if keysP.right {
+		p.move(b, east)
+	}
+	if keysP.left {
+		p.move(b, west)
+	}
+	if keysP.down {
+		p.move(b, south)
+	}
+}
+
+func (p piece) addToBoard(b *board) {
+	for y := range p.matrix {
+		for x := range p.matrix[y] {
+			if p.matrix[y][x] {
+				b[p.position.y+y][p.position.x+x] = true
+			}
+		}
+	}
 }
 
 // Randomly selects a color from the following:

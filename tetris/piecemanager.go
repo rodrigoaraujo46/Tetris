@@ -6,8 +6,10 @@ import "math/rand/v2"
 type pieceManager interface {
 	String() string
 	clear()
-	move(board, direction)
+	move(board, direction) bool
 	hasCollided(board) bool
+	applyMoves(keysPressed, board)
+	addToBoard(*board)
 	//rotate(board)
 }
 
