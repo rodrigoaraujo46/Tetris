@@ -142,6 +142,11 @@ func handleInput(keysChan chan keysPressed) {
 
 // Sets up game and starts the game loop.
 func StartGame() {
+	const (
+		frameTime = 16
+		ticksPerG = 48
+	)
+
 	oldState, err := prepTerminal()
 	if err != nil {
 		panic(err.Error())
@@ -157,12 +162,10 @@ func StartGame() {
 	keysChan := make(chan keysPressed)
 	go handleInput(keysChan)
 
-	ticker := time.NewTicker(16 * time.Millisecond)
-
-	ticks := 0
+	ticker, ticks := time.NewTicker(frameTime*time.Millisecond), 0
 	for range ticker.C {
 		ticks++
-		if ticks == 48 {
+		if ticks == ticksPerG {
 			ticks = 0
 			if piece.move(*board, south) {
 				piece.lock(board)
