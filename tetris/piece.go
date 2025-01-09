@@ -115,20 +115,19 @@ func (p piece) hasCollided(board board) bool {
 
 // Moves a piece in the given direction, if piece collides with the board, nothing happens.
 func (p *piece) move(board board, dir direction) bool {
-
 	tempBar := *p
 	tempBar.position.move(dir)
 	if !tempBar.hasCollided(board) {
 		p.clear()
 		*p = tempBar
 		fmt.Println(p)
-		return true
+		return false
 	}
 
-	return false
+	return true
 }
 
-func (p *piece) applyMoves(keysP keysPressed, b board) {
+func (p *piece) applyMoves(keysP keysPressed, b board) bool {
 	if keysP.right {
 		p.move(b, east)
 	}
@@ -136,11 +135,15 @@ func (p *piece) applyMoves(keysP keysPressed, b board) {
 		p.move(b, west)
 	}
 	if keysP.down {
-		p.move(b, south)
+		if p.move(b, south) {
+			return true
+		}
 	}
+
+	return false
 }
 
-func (p piece) addToBoard(b *board) {
+func (p piece) lock(b *board) {
 	for y := range p.matrix {
 		for x := range p.matrix[y] {
 			if p.matrix[y][x] {

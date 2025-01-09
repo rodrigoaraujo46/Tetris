@@ -8,8 +8,8 @@ type pieceManager interface {
 	clear()
 	move(board, direction) bool
 	hasCollided(board) bool
-	applyMoves(keysPressed, board)
-	addToBoard(*board)
+	applyMoves(keysPressed, board) bool
+	lock(*board)
 	//rotate(board)
 }
 

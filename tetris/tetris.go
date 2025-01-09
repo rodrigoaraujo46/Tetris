@@ -2,7 +2,6 @@ package tetris
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"os"
 	"time"
@@ -37,7 +36,7 @@ func resetTerminal(oldState *term.State) {
 	)
 
 	fmt.Print(showCursor)
-	fmt.Print(clearTerminal)
+	fmt.Println(clearTerminal)
 
 	term.Restore(int(os.Stdin.Fd()), oldState)
 }
@@ -52,14 +51,6 @@ func printLogo() {
 	fmt.Println("                   \\/                    \\/\r")
 }
 
-type keysPressed struct {
-	up    bool
-	right bool
-	down  bool
-	left  bool
-	space bool
-}
-
 func readByte(readCh chan byte) {
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -71,67 +62,71 @@ func readByte(readCh chan byte) {
 	}
 }
 
-func getKeyfromBuffer(buffer *bytes.Buffer, byte byte) byte {
+func getKeys(keyCh chan byte) {
 	const (
-		escape      = 27
-		squareBrack = 91
+		escape  = 27
+		escape2 = 91
+		ctrlC   = 3
 	)
 
-	if buffer.Len() > 3 {
-		buffer.Reset()
+	byteCh := make(chan byte)
+	go readByte(byteCh)
 
-		return 0
-	}
-	if buffer.Len() == 1 {
-		if byte != escape {
-			buffer.Reset()
+	byteNum := 0
+	for byte := range byteCh {
+		byteNum++
+		switch byteNum {
+		case 1:
+			if byte != escape {
+				byteNum = 0
+				if byte == ctrlC {
+					keyCh <- byte
+				}
+			}
+		case 2:
+			if byte != escape2 {
+				byteNum = 0
+			}
+		case 3:
+			keyCh <- byte
+			byteNum = 0
+		default:
+			byteNum = 0
 		}
-
-		return byte
 	}
-	if buffer.Len() == 2 {
-		if byte != squareBrack {
-			buffer.Reset()
-		}
+}
 
-		return 0
-	}
-
-	return byte
+type keysPressed struct {
+	up    bool
+	right bool
+	down  bool
+	left  bool
+	ctrlC bool
 }
 
 // This funtion handles user input and respectively set keysPressed during a frame.
-func handleInput(keysChan chan keysPressed, keysRequest, quit chan struct{}) {
+func handleInput(keysChan chan keysPressed) {
 	const (
 		leftKey  = 68
 		rightKey = 67
 		downKey  = 66
 		upKey    = 65
 		ctrlC    = 3
-		space    = 32
 	)
 
 	keysP := keysPressed{}
 
-	readCh := make(chan byte)
-	go readByte(readCh)
+	keyCh := make(chan byte)
+	go getKeys(keyCh)
 
-	buffer := bytes.NewBuffer(nil)
 	for {
 		select {
-		case <-keysRequest:
-			keysChan <- keysP
+		case keysChan <- keysP:
 			keysP = keysPressed{}
-		case byte := <-readCh:
-			buffer.WriteByte(byte)
-
-			keyByte := getKeyfromBuffer(buffer, byte)
-
+		case keyByte := <-keyCh:
 			switch keyByte {
 			case ctrlC:
-				close(quit)
-			case space:
-				keysP.space = true
+				keysP.ctrlC = true
 			case rightKey:
 				keysP.right = true
 			case leftKey:
@@ -139,6 +134,7 @@ func handleInput(keysChan chan keysPressed, keysRequest, quit chan struct{}) {
 			case downKey:
 				keysP.down = true
 			case upKey:
+				keysP.up = true
 			}
 		}
 	}
@@ -159,29 +155,27 @@ func StartGame() {
 	fmt.Println(piece)
 
 	keysChan := make(chan keysPressed)
-	keysRequest := make(chan struct{})
-	quit := make(chan struct{})
-	go handleInput(keysChan, keysRequest, quit)
-
-	gravity := time.NewTicker(500 * time.Millisecond)
-	defer gravity.Stop()
+	go handleInput(keysChan)
 
 	ticker := time.NewTicker(16 * time.Millisecond)
-	defer ticker.Stop()
 
+	ticks := 0
 	for range ticker.C {
-		select {
-		case <-quit:
-			return
-		case <-gravity.C:
-			if ok := piece.move(*board, south); !ok {
-				piece.addToBoard(board)
+		ticks++
+		if ticks == 48 {
+			ticks = 0
+			if piece.move(*board, south) {
+				piece.lock(board)
 				piece = newPieceManager()
 			}
-		default:
-			keysRequest <- struct{}{}
-			keysPressed := <-keysChan
-			piece.applyMoves(keysPressed, *board)
+		}
+		keysPressed := <-keysChan
+		if keysPressed.ctrlC {
+			return
+		}
+		if piece.applyMoves(keysPressed, *board) {
+			piece.lock(board)
+			piece = newPieceManager()
 		}
 
 	}
