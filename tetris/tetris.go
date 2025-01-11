@@ -170,6 +170,7 @@ func StartGame() {
 			if piece.move(*board, south) {
 				piece.lock(board)
 				piece = newPieceManager()
+				fmt.Println(piece)
 			}
 		}
 		keysPressed := <-keysChan
@@ -179,6 +180,7 @@ func StartGame() {
 		if piece.applyMoves(keysPressed, *board) {
 			piece.lock(board)
 			piece = newPieceManager()
+			fmt.Println(piece)
 		}
 
 	}

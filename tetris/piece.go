@@ -55,8 +55,7 @@ func (p piece) String() string {
 		for range scaleY {
 			for x := range p.matrix[y] {
 				for range scaleX {
-					isInView := p.position.y >= -1 && (p.position.y != -1 || y != 0)
-					if p.matrix[y][x] && isInView {
+					if p.matrix[y][x] {
 						sBuilder.WriteRune(block)
 					} else {
 						sBuilder.WriteString(forward)
@@ -84,8 +83,7 @@ func (p piece) clear() {
 		for range scaleY {
 			for x := range p.matrix[y] {
 				for range scaleX {
-					isInView := p.position.y >= -1 && (p.position.y != -1 || y != 0)
-					if p.matrix[y][x] && isInView {
+					if p.matrix[y][x] {
 						sBuilder.WriteRune(' ')
 					} else {
 						sBuilder.WriteString(forward)

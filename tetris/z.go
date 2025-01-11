@@ -5,13 +5,24 @@ type z struct {
 	*piece
 }
 
+var zMatrix = [][][]bool{
+	{
+		{false, false, false},
+		{true, true, false},
+		{false, true, true},
+	},
+	{
+		{false, false, true},
+		{false, true, true},
+		{false, true, false},
+	},
+}
+
 // Creates a z piece with a random colour, default starting position and a matrix representative of it's blocks.
 func newZ() *z {
 	piece := newPiece()
-	piece.position = point{3, -2}
-	piece.matrix = make([][]bool, 3)
-	piece.matrix[0] = []bool{true, true, false}
-	piece.matrix[1] = []bool{false, true, true}
+	piece.position = point{3, -1}
+	piece.matrix = zMatrix[0]
 
 	return &z{piece}
 }

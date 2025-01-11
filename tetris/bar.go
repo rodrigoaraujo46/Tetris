@@ -5,19 +5,33 @@ type bar struct {
 	*piece
 }
 
+var barMatrix = [][][]bool{
+	{
+		{false, false, false, false},
+		{false, false, false, false},
+		{true, true, true, true},
+		{false, false, false, false},
+	},
+	{
+		{false, false, true, false},
+		{false, false, true, false},
+		{false, false, true, false},
+		{false, false, true, false},
+	},
+}
+
 // Creates a bar piece with a random colour, default starting position and a matrix representative of it's blocks.
 func newBar() *bar {
 	piece := newPiece()
 	piece.position = point{3, -2}
-	piece.matrix = make([][]bool, 4)
-	piece.matrix[1] = []bool{true, true, true, true}
+	piece.matrix = barMatrix[0]
 
 	return &bar{piece}
 }
 
 /*
 func (b *bar) rotate(board board) {
-	b.clear()
+	b.piece.clear()
 
 	tempBar := *b
 	tempBar.isVertical = !tempBar.isVertical
@@ -25,6 +39,6 @@ func (b *bar) rotate(board board) {
 		*b = tempBar
 	}
 
-	fmt.Println(b)
+	fmt.Println(b.piece)
 }
 */
