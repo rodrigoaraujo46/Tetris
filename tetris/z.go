@@ -1,11 +1,13 @@
 package tetris
 
+import "fmt"
+
 // A z represents a z piece.
 type z struct {
-	*piece
+	piece
 }
 
-var zMatrix = [][][]bool{
+var zRotMatrix = [][][]bool{
 	{
 		{false, false, false},
 		{true, true, false},
@@ -22,21 +24,19 @@ var zMatrix = [][][]bool{
 func newZ() *z {
 	piece := newPiece()
 	piece.position = point{3, -1}
-	piece.matrix = zMatrix[0]
+	piece.matrix = zRotMatrix[piece.rotationIdx]
 
-	return &z{piece}
+	return &z{*piece}
 }
 
-/*
-func (b *bar) rotate(board board) {
-	b.clear()
-
-	tempBar := *b
-	tempBar.isVertical = !tempBar.isVertical
+func (z *z) rotate(board board) {
+	tempBar := *z
+	tempBar.rotationIdx++
+	tempBar.rotationIdx %= len(zRotMatrix)
+	tempBar.matrix = zRotMatrix[z.rotationIdx]
 	if !tempBar.hasCollided(board) {
-		*b = tempBar
+		z.piece.clear()
+		*z = tempBar
+		fmt.Println(z.piece)
 	}
-
-	fmt.Println(b)
 }
-*/

@@ -2,33 +2,21 @@ package tetris
 
 // A square represents a square piece.
 type square struct {
-	*piece
+	piece
 }
 
-var squareMatrix = [][]bool{
+var squareRotMatrix = [][]bool{
 	{true, true},
 	{true, true},
 }
 
-// Creates a square piece with a random colour, default starting position and a matrix representative of it's blocks.
+// Creates a square piece with a random colour, default starting position and a matrix representative of it'square blocks.
 func newSquare() *square {
 	piece := newPiece()
 	piece.position = point{3, 0}
-	piece.matrix = squareMatrix
+	piece.matrix = squareRotMatrix
 
-	return &square{piece}
+	return &square{*piece}
 }
 
-/*
-func (b *bar) rotate(board board) {
-	b.clear()
-
-	tempBar := *b
-	tempBar.isVertical = !tempBar.isVertical
-	if !tempBar.hasCollided(board) {
-		*b = tempBar
-	}
-
-	fmt.Println(b)
-}
-*/
+func (square *square) rotate(board board) {}

@@ -1,11 +1,15 @@
 package tetris
 
+import (
+	"fmt"
+)
+
 // A j represents a j piece.
 type j struct {
-	*piece
+	piece
 }
 
-var jMatrix = [][][]bool{
+var jRotMatrix = [][][]bool{
 	{
 		{false, false, false},
 		{true, true, true},
@@ -32,21 +36,19 @@ var jMatrix = [][][]bool{
 func newJ() *j {
 	piece := newPiece()
 	piece.position = point{3, -1}
-	piece.matrix = jMatrix[0]
+	piece.matrix = jRotMatrix[piece.rotationIdx]
 
-	return &j{piece}
+	return &j{*piece}
 }
 
-/*
-func (b *bar) rotate(board board) {
-	b.clear()
-
-	tempBar := *b
-	tempBar.isVertical = !tempBar.isVertical
+func (j *j) rotate(board board) {
+	tempBar := *j
+	tempBar.rotationIdx++
+	tempBar.rotationIdx %= len(jRotMatrix)
+	tempBar.matrix = jRotMatrix[j.rotationIdx]
 	if !tempBar.hasCollided(board) {
-		*b = tempBar
+		j.piece.clear()
+		*j = tempBar
+		fmt.Println(j.piece)
 	}
-
-	fmt.Println(b)
 }
-*/

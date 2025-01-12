@@ -1,11 +1,13 @@
 package tetris
 
+import "fmt"
+
 // A l represents a l piece.
 type l struct {
-	*piece
+	piece
 }
 
-var lMatrix = [][][]bool{
+var lRotMatrix = [][][]bool{
 	{
 		{false, false, false},
 		{true, true, true},
@@ -32,21 +34,19 @@ var lMatrix = [][][]bool{
 func newL() *l {
 	piece := newPiece()
 	piece.position = point{3, -1}
-	piece.matrix = lMatrix[0]
+	piece.matrix = lRotMatrix[piece.rotationIdx]
 
-	return &l{piece}
+	return &l{*piece}
 }
 
-/*
-func (b *bar) rotate(board board) {
-	b.clear()
-
-	tempBar := *b
-	tempBar.isVertical = !tempBar.isVertical
+func (l *l) rotate(board board) {
+	tempBar := *l
+	tempBar.rotationIdx++
+	tempBar.rotationIdx %= len(lRotMatrix)
+	tempBar.matrix = lRotMatrix[l.rotationIdx]
 	if !tempBar.hasCollided(board) {
-		*b = tempBar
+		l.piece.clear()
+		*l = tempBar
+		fmt.Println(l.piece)
 	}
-
-	fmt.Println(b)
 }
-*/

@@ -10,7 +10,7 @@ const (
 	block   = '█'
 	yTempl  = "\033[%dH" // Preped string to move cursor in y axis.
 	xTempl  = "\033[%dC" // Preped string to move cursor in x axis.
-	forward = "\033[C"   // Moves the cursor forward once
+	forward = "\033[C" // Moves the cursor forward once
 )
 
 // Direction is an int type used with ther directions iota.
@@ -26,9 +26,10 @@ const (
 
 // Piece represents a tetris piece.
 type piece struct {
-	position point
-	color    string
-	matrix   [][]bool
+	position    point
+	color       string
+	matrix      [][]bool
+	rotationIdx int
 }
 
 // Creates a new piece and set its color.

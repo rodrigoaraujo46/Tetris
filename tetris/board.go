@@ -1,14 +1,17 @@
 package tetris
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	rows   = 20
 	cols   = 10
-	scaleX = 5 // Scale at which the board is printed in the X axis.
-	scaleY = 2 // Scale at which the board is printed in the Y axis.
-	initX  = 1 // X positon for top left corner of the board.
-	initY  = 8 // Y positon for top left corner of the board.
+	scaleX = 5  // Scale at which the board is printed in the X axis.
+	scaleY = 2  // Scale at which the board is printed in the Y axis.
+	initX  = 15 // X positon for top left corner of the board.
+	initY  = 8  // Y positon for top left corner of the board.
 )
 
 // Represents the board, true represents a colision point.
@@ -35,13 +38,18 @@ func (b board) String() string {
 	var sBuilder strings.Builder
 	sBuilder.Grow(boardStrSize)
 
+	// Moves cursor to printing positon.
+	cursorY := fmt.Sprintf(yTempl, initY-1)
+	cursorX := fmt.Sprintf(xTempl, initX-1)
+	sBuilder.WriteString(cursorY + cursorX)
+
 	//Top border
 	sBuilder.WriteRune(topLeft)
 	for range cols * scaleX {
 		sBuilder.WriteRune(horizontalWall)
 	}
 	sBuilder.WriteRune(topRight)
-	sBuilder.WriteString("\n\r")
+	sBuilder.WriteString("\n\r" + cursorX) //Sets cursor to new line's first position.
 
 	//Left and right border
 	for range rows {
@@ -53,7 +61,7 @@ func (b board) String() string {
 				}
 			}
 			sBuilder.WriteRune(verticalWall)
-			sBuilder.WriteString("\n\r")
+			sBuilder.WriteString("\n\r" + cursorX) //Sets cursor to new line's first position.
 		}
 	}
 

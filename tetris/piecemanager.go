@@ -10,7 +10,7 @@ type pieceManager interface {
 	hasCollided(board) bool
 	applyMoves(keysPressed, board) bool
 	lock(*board)
-	//rotate(board)
+	rotate(board)
 }
 
 // Generates a random piece.

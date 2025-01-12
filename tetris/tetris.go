@@ -43,12 +43,12 @@ func resetTerminal(oldState *term.State) {
 
 // Prints tetris ascii art.
 func printLogo() {
-	fmt.Println("      ___________     __         .__\r")
-	fmt.Println("      \\__    ___/____/  |________|__| ______\r")
-	fmt.Println("        |    |_/ __ \\   __\\_  __ \\  |/  ___/\r")
-	fmt.Println("        |    |\\  ___/|  |  |  | \\/  |\\___ \\\r")
-	fmt.Println("        |____| \\___  >__|  |__|  |__/____  >\r")
-	fmt.Println("                   \\/                    \\/\r")
+	fmt.Println("                    ___________     __         .__\r")
+	fmt.Println("                    \\__    ___/____/  |________|__| ______\r")
+	fmt.Println("                      |    |_/ __ \\   __\\_  __ \\  |/  ___/\r")
+	fmt.Println("                      |    |\\  ___/|  |  |  | \\/  |\\___ \\\r")
+	fmt.Println("                      |____| \\___  >__|  |__|  |__/____  >\r")
+	fmt.Println("                                 \\/                    \\/\r")
 }
 
 func readByte(readCh chan byte) {
@@ -176,6 +176,9 @@ func StartGame() {
 		keysPressed := <-keysChan
 		if keysPressed.ctrlC {
 			return
+		}
+		if keysPressed.up {
+			piece.rotate(*board)
 		}
 		if piece.applyMoves(keysPressed, *board) {
 			piece.lock(board)
