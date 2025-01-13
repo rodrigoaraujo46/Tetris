@@ -26,7 +26,6 @@ func makeBoard() *board {
 // Returns a string that if printed displayed the board.
 func (b board) String() string {
 	const (
-		boardStrSize   = 2304 // Byte size of board string builder.
 		horizontalWall = '═'
 		verticalWall   = '║'
 		topLeft        = '╔'
@@ -36,7 +35,6 @@ func (b board) String() string {
 	)
 
 	var sBuilder strings.Builder
-	sBuilder.Grow(boardStrSize)
 
 	// Moves cursor to printing positon.
 	cursorY := fmt.Sprintf(yTempl, initY-1)
@@ -71,11 +69,12 @@ func (b board) String() string {
 		sBuilder.WriteRune(horizontalWall)
 	}
 	sBuilder.WriteRune(bottomRight)
-	sBuilder.WriteString("\n\n\r")
+	sBuilder.WriteString("\r")
+
 	return sBuilder.String()
 }
 
-// Checks if point is in bounds and if it doesn't collide with other blocks.
+// Returns true if point is out of bounds or collides with blocks.
 func (b board) hasCollided(p point) bool {
 	if p.x < 0 || p.x >= cols {
 		return true

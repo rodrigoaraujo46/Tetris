@@ -26,10 +26,10 @@ const (
 
 // Piece represents a tetris piece.
 type piece struct {
-	position    point
+	position    point // The position of the top-left corner of the piece on the board.
 	color       string
-	rotMatrix   [][][]bool
-	rotationIdx int
+	rotMatrix   [][][]bool // Matrix representing the possible states of the piece when rotating.
+	rotationIdx int        // Matrix id for the current rotation state.
 }
 
 // Generates and returns a random piece.
@@ -53,7 +53,7 @@ func newPiece() *piece {
 	panic("Not a valid piece type")
 }
 
-// Creates a bar piece with a random colour, default starting position and a matrix representative of it's blocks.
+// Returns a piece representing the bar piece with its default values.
 func newBar() *piece {
 	piece := &piece{}
 	piece.position = point{3, -2}
@@ -76,7 +76,7 @@ func newBar() *piece {
 	return piece
 }
 
-// Creates a j piece with a random colour, default starting position and a matrix representative of it's blocks.
+// Returns a piece representing the J piece with its default values.
 func newJ() *piece {
 	piece := &piece{}
 	piece.position = point{3, -1}
@@ -107,7 +107,7 @@ func newJ() *piece {
 	return piece
 }
 
-// Creates a l piece with a random colour, default starting position and a matrix representative of it's blocks.
+// Returns a piece representing the L piece with its default values.
 func newL() *piece {
 	piece := &piece{}
 	piece.position = point{3, -1}
@@ -138,7 +138,7 @@ func newL() *piece {
 	return piece
 }
 
-// Creates a s piece with a random colour, default starting position and a matrix representative of it's blocks.
+// Returns a piece representing the S piece with its default values.
 func newS() *piece {
 	piece := &piece{}
 	piece.position = point{3, -1}
@@ -159,7 +159,7 @@ func newS() *piece {
 	return piece
 }
 
-// Creates a square piece with a random colour, default starting position and a matrix representative of it'square blocks.
+// Returns a piece representing the square piece with its default values.
 func newSquare() *piece {
 	piece := &piece{}
 	piece.position = point{3, 0}
@@ -174,7 +174,7 @@ func newSquare() *piece {
 	return piece
 }
 
-// Creates a t piece with a random colour, default starting position and a matrix representative of it't blocks.
+// Returns a piece representing the T piece with its default values.
 func newT() *piece {
 	piece := &piece{}
 	piece.position = point{3, -1}
@@ -205,7 +205,7 @@ func newT() *piece {
 	return piece
 }
 
-// Creates a z piece with a random colour, default starting position and a matrix representative of it't blocks.
+// Returns a piece representing the Z piece with its default values.
 func newZ() *piece {
 	piece := &piece{}
 	piece.position = point{3, -1}
@@ -299,7 +299,8 @@ func (p piece) hasCollided(board board) bool {
 	return false
 }
 
-// Moves a piece in the given direction, if piece collides with the board, nothing happens.
+// Moves a piece in the given direction, if piece collides with the board.
+// Returns true if piece has collided ans can't be moved.
 func (p *piece) move(board board, dir direction) bool {
 	tempPiece := *p
 	tempPiece.position.move(dir)
@@ -313,6 +314,8 @@ func (p *piece) move(board board, dir direction) bool {
 	return true
 }
 
+// Apply moves to the piece based on the keys pressed during the frame.
+// Returns true if a piece collides when moving down.
 func (p *piece) applyMoves(keysP keysPressed, b board) bool {
 	if keysP.right {
 		p.move(b, east)
@@ -329,6 +332,8 @@ func (p *piece) applyMoves(keysP keysPressed, b board) bool {
 	return false
 }
 
+// Locks piece in the board, sets position in board to true representing a
+// new colision point.
 func (p piece) lock(b *board) {
 	for y := range p.rotMatrix[p.rotationIdx] {
 		for x := range p.rotMatrix[p.rotationIdx][y] {
@@ -339,6 +344,7 @@ func (p piece) lock(b *board) {
 	}
 }
 
+// Rotates piece clockwise, if possible.
 func (p *piece) rotate(board board) {
 	tempPiece := *p
 	tempPiece.rotationIdx++

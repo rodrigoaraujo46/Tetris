@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// keysPressed represents the keys pressed in each frame.
 type keysPressed struct {
 	up    bool
 	right bool
@@ -13,6 +14,7 @@ type keysPressed struct {
 	ctrlC bool
 }
 
+// Writes to a channel every byte read from stdin.
 func readByte(readCh chan byte) {
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -24,10 +26,18 @@ func readByte(readCh chan byte) {
 	}
 }
 
+// Writes to a channel a byte representing that is the last byte of an important key that was pressed.
+// A key is important if it used by our tetris game, these are:
+//
+//	leftKey  = 68
+//	rightKey = 67
+//	downKey  = 66
+//	upKey    = 65
+//	ctrlC    = 3
 func getKeys(keyCh chan byte) {
 	const (
-		escape  = 27
-		escape2 = 91
+		escape  = 27 // First byte of an escape sequence.
+		escape2 = 91 // Second byte of an escape sequence.
 		ctrlC   = 3
 	)
 
@@ -58,8 +68,10 @@ func getKeys(keyCh chan byte) {
 	}
 }
 
-// This funtion handles user input and respectively set keysPressed during a frame.
+// Sets keys pressed during every frame and writes the struct to the given channel
+// when it is ready to receive.
 func handleInput(keysChan chan keysPressed) {
+	// Last byte of an important key.
 	const (
 		leftKey  = 68
 		rightKey = 67
