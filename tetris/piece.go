@@ -10,7 +10,7 @@ const (
 	block   = '█'
 	yTempl  = "\033[%dH" // Preped string to move cursor in y axis.
 	xTempl  = "\033[%dC" // Preped string to move cursor in x axis.
-	forward = "\033[C" // Moves the cursor forward once
+	forward = "\033[C"   // Moves the cursor forward once
 )
 
 // Direction is an int type used with ther directions iota.
@@ -28,15 +28,181 @@ const (
 type piece struct {
 	position    point
 	color       string
-	matrix      [][]bool
+	rotMatrix   [][][]bool
 	rotationIdx int
 }
 
-// Creates a new piece and set its color.
-func newPiece() *piece {
-	color := newColor()
+// Creates a bar piece with a random colour, default starting position and a matrix representative of it's blocks.
+func newBar() *piece {
+	piece := &piece{}
+	piece.position = point{3, -2}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{false, false, false, false},
+			{false, false, false, false},
+			{true, true, true, true},
+			{false, false, false, false},
+		},
+		{
+			{false, false, true, false},
+			{false, false, true, false},
+			{false, false, true, false},
+			{false, false, true, false},
+		},
+	}
 
-	return &piece{color: color}
+	return piece
+}
+
+// Creates a j piece with a random colour, default starting position and a matrix representative of it's blocks.
+func newJ() *piece {
+	piece := &piece{}
+	piece.position = point{3, -1}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{false, false, false},
+			{true, true, true},
+			{false, false, true},
+		},
+		{
+			{false, true, false},
+			{false, true, false},
+			{true, true, false},
+		},
+		{
+			{true, false, false},
+			{true, true, true},
+			{false, false, false},
+		},
+		{
+			{false, true, true},
+			{false, true, false},
+			{false, true, false},
+		},
+	}
+
+	return piece
+}
+
+// Creates a l piece with a random colour, default starting position and a matrix representative of it's blocks.
+func newL() *piece {
+	piece := &piece{}
+	piece.position = point{3, -1}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{false, false, false},
+			{true, true, true},
+			{true, false, false},
+		},
+		{
+			{true, true, false},
+			{false, true, false},
+			{false, true, false},
+		},
+		{
+			{false, false, true},
+			{true, true, true},
+			{false, false, false},
+		},
+		{
+			{false, true, false},
+			{false, true, false},
+			{false, true, true},
+		},
+	}
+
+	return piece
+}
+
+// Creates a s piece with a random colour, default starting position and a matrix representative of it's blocks.
+func newS() *piece {
+	piece := &piece{}
+	piece.position = point{3, -1}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{false, false, false},
+			{false, true, true},
+			{true, true, false},
+		},
+		{
+			{false, true, false},
+			{false, true, true},
+			{false, false, true},
+		},
+	}
+
+	return piece
+}
+
+// Creates a square piece with a random colour, default starting position and a matrix representative of it'square blocks.
+func newSquare() *piece {
+	piece := &piece{}
+	piece.position = point{3, 0}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{true, true},
+			{true, true},
+		},
+	}
+
+	return piece
+}
+
+// Creates a t piece with a random colour, default starting position and a matrix representative of it't blocks.
+func newT() *piece {
+	piece := &piece{}
+	piece.position = point{3, -1}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{false, false, false},
+			{true, true, true},
+			{false, true, false},
+		},
+		{
+			{false, true, false},
+			{true, true, false},
+			{false, true, false},
+		},
+		{
+			{false, true, false},
+			{true, true, true},
+			{false, false, false},
+		},
+		{
+			{false, true, false},
+			{false, true, true},
+			{false, true, false},
+		},
+	}
+
+	return piece
+}
+
+// Creates a z piece with a random colour, default starting position and a matrix representative of it't blocks.
+func newZ() *piece {
+	piece := &piece{}
+	piece.position = point{3, -1}
+	piece.color = newColor()
+	piece.rotMatrix = [][][]bool{
+		{
+			{false, false, false},
+			{true, true, false},
+			{false, true, true},
+		},
+		{
+			{false, false, true},
+			{false, true, true},
+			{false, true, false},
+		},
+	}
+
+	return piece
 }
 
 // String implements fmt's Stringer interface.
@@ -52,11 +218,11 @@ func (p piece) String() string {
 	sBuilder.WriteString(cursorY + cursorX)
 
 	//Sets the bar with the given scale.
-	for y := range p.matrix {
+	for y := range p.rotMatrix[p.rotationIdx] {
 		for range scaleY {
-			for x := range p.matrix[y] {
+			for x := range p.rotMatrix[p.rotationIdx][y] {
 				for range scaleX {
-					if p.matrix[y][x] {
+					if p.rotMatrix[p.rotationIdx][y][x] {
 						sBuilder.WriteRune(block)
 					} else {
 						sBuilder.WriteString(forward)
@@ -80,11 +246,11 @@ func (p piece) clear() {
 	sBuilder.WriteString(cursorY + cursorX)
 
 	//Sets the bar with the given scale to whitespace.
-	for y := range p.matrix {
+	for y := range p.rotMatrix[p.rotationIdx] {
 		for range scaleY {
-			for x := range p.matrix[y] {
+			for x := range p.rotMatrix[p.rotationIdx][y] {
 				for range scaleX {
-					if p.matrix[y][x] {
+					if p.rotMatrix[p.rotationIdx][y][x] {
 						sBuilder.WriteRune(' ')
 					} else {
 						sBuilder.WriteString(forward)
@@ -100,9 +266,9 @@ func (p piece) clear() {
 // Checks if any point in a piece has collided with the given board.
 func (p piece) hasCollided(board board) bool {
 	pos := p.position
-	for y := range p.matrix {
-		for x := range p.matrix[y] {
-			if p.matrix[y][x] {
+	for y := range p.rotMatrix[p.rotationIdx] {
+		for x := range p.rotMatrix[p.rotationIdx][y] {
+			if p.rotMatrix[p.rotationIdx][y][x] {
 				if board.hasCollided(point{pos.x + x, pos.y + y}) {
 					return true
 				}
@@ -114,11 +280,11 @@ func (p piece) hasCollided(board board) bool {
 
 // Moves a piece in the given direction, if piece collides with the board, nothing happens.
 func (p *piece) move(board board, dir direction) bool {
-	tempBar := *p
-	tempBar.position.move(dir)
-	if !tempBar.hasCollided(board) {
+	tempPiece := *p
+	tempPiece.position.move(dir)
+	if !tempPiece.hasCollided(board) {
 		p.clear()
-		*p = tempBar
+		*p = tempPiece
 		fmt.Println(p)
 		return false
 	}
@@ -143,12 +309,23 @@ func (p *piece) applyMoves(keysP keysPressed, b board) bool {
 }
 
 func (p piece) lock(b *board) {
-	for y := range p.matrix {
-		for x := range p.matrix[y] {
-			if p.matrix[y][x] {
+	for y := range p.rotMatrix[p.rotationIdx] {
+		for x := range p.rotMatrix[p.rotationIdx][y] {
+			if p.rotMatrix[p.rotationIdx][y][x] {
 				b[p.position.y+y][p.position.x+x] = true
 			}
 		}
+	}
+}
+
+func (p *piece) rotate(board board) {
+	tempPiece := *p
+	tempPiece.rotationIdx++
+	tempPiece.rotationIdx %= len(tempPiece.rotMatrix)
+	if !tempPiece.hasCollided(board) {
+		p.clear()
+		*p = tempPiece
+		fmt.Println(p)
 	}
 }
 
