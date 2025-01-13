@@ -243,7 +243,8 @@ func (p piece) String() string {
 		for range scaleY {
 			for x := range p.rotMatrix[p.rotationIdx][y] {
 				for range scaleX {
-					if p.rotMatrix[p.rotationIdx][y][x] {
+					isVisible := p.position.y+y >= 0
+					if p.rotMatrix[p.rotationIdx][y][x] && isVisible {
 						sBuilder.WriteRune(block)
 					} else {
 						sBuilder.WriteString(forward)
@@ -271,7 +272,8 @@ func (p piece) clear() {
 		for range scaleY {
 			for x := range p.rotMatrix[p.rotationIdx][y] {
 				for range scaleX {
-					if p.rotMatrix[p.rotationIdx][y][x] {
+					isVisible := p.position.y+y >= 0
+					if p.rotMatrix[p.rotationIdx][y][x] && isVisible {
 						sBuilder.WriteRune(' ')
 					} else {
 						sBuilder.WriteString(forward)
