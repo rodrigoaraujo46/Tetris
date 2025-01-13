@@ -31,7 +31,7 @@ func StartGame() {
 
 	board := makeBoard()
 	fmt.Println(board)
-	piece := newPieceManager()
+	piece := newPiece()
 	fmt.Println(piece)
 
 	keysChan := make(chan keysPressed)
@@ -44,7 +44,7 @@ func StartGame() {
 			ticks = 0
 			if piece.move(*board, south) {
 				piece.lock(board)
-				piece = newPieceManager()
+				piece = newPiece()
 				fmt.Println(piece)
 			}
 		}
@@ -57,7 +57,7 @@ func StartGame() {
 		}
 		if piece.applyMoves(keysPressed, *board) {
 			piece.lock(board)
-			piece = newPieceManager()
+			piece = newPiece()
 			fmt.Println(piece)
 		}
 
