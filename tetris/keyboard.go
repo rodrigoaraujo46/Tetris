@@ -5,7 +5,6 @@ import (
 	"os"
 )
 
-
 type keysPressed struct {
 	up    bool
 	right bool

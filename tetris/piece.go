@@ -32,8 +32,7 @@ type piece struct {
 	rotationIdx int
 }
 
-// Generates a random piece.
-// Returns pieceManager interface
+// Generates and returns a random piece.
 func newPiece() *piece {
 	switch rand.IntN(7) {
 	case 0:
