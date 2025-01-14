@@ -15,6 +15,19 @@ func printLogo() {
 	fmt.Println("                                 \\/                    \\/\r")
 }
 
+func LockAndNew(piece, nextPiece *piece, board *board) (*piece, *piece) {
+	piece.lock(board)
+
+	nextPiece.clear()
+	piece = nextPiece
+	piece.moveToBoard()
+
+	nextPiece = newPiece()
+
+	fmt.Println(piece, nextPiece)
+	return piece, nextPiece
+}
+
 // Sets up game and starts the game loop.
 func StartGame() {
 	const (
@@ -27,12 +40,19 @@ func StartGame() {
 		panic(err.Error())
 	}
 	defer resetTerminal(oldState)
+
 	printLogo()
 
 	board := makeBoard()
 	fmt.Println(board)
+	printNextWindow()
+
 	piece := newPiece()
+	piece.moveToBoard()
 	fmt.Println(piece)
+
+	nextPiece := newPiece()
+	fmt.Println(nextPiece)
 
 	keysChan := make(chan keysPressed)
 	go handleInput(keysChan)
@@ -43,9 +63,7 @@ func StartGame() {
 		if ticks == ticksPerG {
 			ticks = 0
 			if piece.move(*board, south) {
-				piece.lock(board)
-				piece = newPiece()
-				fmt.Println(piece)
+				piece, nextPiece = LockAndNew(piece, nextPiece, board)
 			}
 		}
 		keysPressed := <-keysChan
@@ -56,9 +74,7 @@ func StartGame() {
 			piece.rotate(*board)
 		}
 		if piece.applyMoves(keysPressed, *board) {
-			piece.lock(board)
-			piece = newPiece()
-			fmt.Println(piece)
+			piece, nextPiece = LockAndNew(piece, nextPiece, board)
 		}
 
 	}

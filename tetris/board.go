@@ -88,3 +88,57 @@ func (b board) hasCollided(p point) bool {
 
 	return false
 }
+
+// Prints next window for displaying the next piece.
+func printNextWindow() {
+	const (
+		horizontalWall  = '═'
+		verticalWall    = '║'
+		topLeft         = '╔'
+		topRight        = '╗'
+		bottomLeft      = '╚'
+		bottomRight     = '╝'
+		nextWindowLen   = 5          // Next window side lenght.
+		nextWindowInitX = initX + 52 // X positon for top left corner of the next window.
+		nextWindowInitY = initY + 15 // Y positon for top left corner of the next window.
+	)
+
+	var sBuilder strings.Builder
+
+	// Moves cursor to printing positon.
+	cursorY := fmt.Sprintf(yTempl, nextWindowInitY-1)
+	cursorX := fmt.Sprintf(xTempl, nextWindowInitX-1)
+	sBuilder.WriteString(cursorY + cursorX)
+
+	//Top border
+	sBuilder.WriteRune(topLeft)
+	for range nextWindowLen * scaleX {
+		sBuilder.WriteRune(horizontalWall)
+	}
+	sBuilder.WriteRune(topRight)
+	sBuilder.WriteString("\n\r" + cursorX) //Sets cursor to new line's first position.
+
+	//Left and right border
+	for range nextWindowLen {
+		for range scaleY {
+			sBuilder.WriteRune(verticalWall)
+			for range nextWindowLen {
+				for range scaleX {
+					sBuilder.WriteRune(' ')
+				}
+			}
+			sBuilder.WriteRune(verticalWall)
+			sBuilder.WriteString("\n\r" + cursorX) //Sets cursor to new line's first position.
+		}
+	}
+
+	//Bottom border
+	sBuilder.WriteRune(bottomLeft)
+	for range nextWindowLen * scaleX {
+		sBuilder.WriteRune(horizontalWall)
+	}
+	sBuilder.WriteRune(bottomRight)
+	sBuilder.WriteString("\r")
+
+	fmt.Println(sBuilder.String())
+}

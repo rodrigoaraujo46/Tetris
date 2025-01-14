@@ -26,10 +26,11 @@ const (
 
 // Piece represents a tetris piece.
 type piece struct {
-	position    point // The position of the top-left corner of the piece on the board.
-	color       string
-	rotMatrix   [][][]bool // Matrix representing the possible states of the piece when rotating.
-	rotationIdx int        // Matrix id for the current rotation state.
+	position      point // The position of the top-left corner of the piece on the board.
+	boardPosition point
+	color         string
+	rotMatrix     [][][]bool // Matrix representing the possible states of the piece when rotating.
+	rotationIdx   int        // Matrix id for the current rotation state.
 }
 
 // Generates and returns a random piece.
@@ -56,7 +57,8 @@ func newPiece() *piece {
 // Returns a piece representing the bar piece with its default values.
 func newBar() *piece {
 	piece := &piece{}
-	piece.position = point{3, -2}
+	piece.position = point{11, 8}
+	piece.boardPosition = point{3, -2}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -79,7 +81,8 @@ func newBar() *piece {
 // Returns a piece representing the J piece with its default values.
 func newJ() *piece {
 	piece := &piece{}
-	piece.position = point{3, -1}
+	piece.position = point{11, 9}
+	piece.boardPosition = point{3, -1}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -110,7 +113,8 @@ func newJ() *piece {
 // Returns a piece representing the L piece with its default values.
 func newL() *piece {
 	piece := &piece{}
-	piece.position = point{3, -1}
+	piece.position = point{11, 9}
+	piece.boardPosition = point{3, -1}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -141,7 +145,8 @@ func newL() *piece {
 // Returns a piece representing the S piece with its default values.
 func newS() *piece {
 	piece := &piece{}
-	piece.position = point{3, -1}
+	piece.position = point{11, 9}
+	piece.boardPosition = point{3, -1}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -162,7 +167,8 @@ func newS() *piece {
 // Returns a piece representing the square piece with its default values.
 func newSquare() *piece {
 	piece := &piece{}
-	piece.position = point{3, 0}
+	piece.position = point{12, 10}
+	piece.boardPosition = point{3, 0}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -177,7 +183,8 @@ func newSquare() *piece {
 // Returns a piece representing the T piece with its default values.
 func newT() *piece {
 	piece := &piece{}
-	piece.position = point{3, -1}
+	piece.position = point{11, 9}
+	piece.boardPosition = point{3, -1}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -208,7 +215,8 @@ func newT() *piece {
 // Returns a piece representing the Z piece with its default values.
 func newZ() *piece {
 	piece := &piece{}
-	piece.position = point{3, -1}
+	piece.position = point{11, 9}
+	piece.boardPosition = point{3, -1}
 	piece.color = newColor()
 	piece.rotMatrix = [][][]bool{
 		{
@@ -314,6 +322,10 @@ func (p *piece) move(board board, dir direction) bool {
 	}
 
 	return true
+}
+
+func (p *piece) moveToBoard() {
+	p.position = p.boardPosition
 }
 
 // Apply moves to the piece based on the keys pressed during the frame.
