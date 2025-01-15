@@ -24,7 +24,6 @@ func LockAndNew(piece, nextPiece *piece, board *board) (*piece, *piece) {
 
 	nextPiece = newPiece()
 
-	fmt.Println(piece, nextPiece)
 	return piece, nextPiece
 }
 
@@ -64,17 +63,24 @@ func StartGame() {
 			ticks = 0
 			if piece.move(*board, south) {
 				piece, nextPiece = LockAndNew(piece, nextPiece, board)
+				if piece.hasCollided(*board) {
+					break
+				}
+				fmt.Println(piece, nextPiece)
+				continue
 			}
 		}
+
 		keysPressed := <-keysChan
 		if keysPressed.ctrlC {
 			return
 		}
-		if keysPressed.up {
-			piece.rotate(*board)
-		}
 		if piece.applyMoves(keysPressed, *board) {
 			piece, nextPiece = LockAndNew(piece, nextPiece, board)
+			if piece.hasCollided(*board) {
+				break
+			}
+			fmt.Println(piece, nextPiece)
 		}
 
 	}

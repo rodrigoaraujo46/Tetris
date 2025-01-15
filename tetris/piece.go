@@ -331,6 +331,9 @@ func (p *piece) moveToBoard() {
 // Apply moves to the piece based on the keys pressed during the frame.
 // Returns true if a piece collides when moving down.
 func (p *piece) applyMoves(keysP keysPressed, b board) bool {
+	if keysP.up {
+		p.rotate(b)
+	}
 	if keysP.right {
 		p.move(b, east)
 	}
